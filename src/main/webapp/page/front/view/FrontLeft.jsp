@@ -68,7 +68,7 @@
                     <%
                         int size=0;
                         for (ArticleBean articleBean : articleList) {
-                            while (articleBean.getArticleTypeId()==articleTypeBean.getArticleTypeId()){
+                            if (articleBean.getArticleTypeId()==articleTypeBean.getArticleTypeId()){
                                 size += 1;
                             }
                         }

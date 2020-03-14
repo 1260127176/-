@@ -12,20 +12,13 @@
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>若鱼Blog首页</title>
-    <meta name="keywords" content=""/>
-    <meta name="description" content=""/>
-    <link href="<%=basePath%>/static/css/default.css" rel="stylesheet" type="text/css" media="screen"/>
-</head>
 <body>
 <jsp:include page="view/FrontHead.jsp" flush="true"/>
 <!-- start content -->
 <div id="page">
     <div id="content">
         <%
-//                    List<ArticleCommentBean> articleCommentList = (List<ArticleCommentBean>) request.getAttribute("commentBeanList");
+            //                    List<ArticleCommentBean> articleCommentList = (List<ArticleCommentBean>) request.getAttribute("commentBeanList");
             PageInfo<ArticleMessage> articleList= (PageInfo<ArticleMessage>) session.getAttribute("pageInfo");
             if (articleList == null || articleList.getSize() == 0) {
         %>
@@ -118,91 +111,7 @@
         </div>
     </div>
     <!-- end content -->
-    <div id="sidebar">
-        <ul>
-            <li id="search">
-                <h2>搜索</h2>
-                <!-- Google站内搜索开始 -->
-                <form method="get" action="/article/selectAll">
-                    <fieldset><input type=text name=q>
-                        <input type=submit name=btnG value="搜索">
-                    </fieldset>
-                </form>
-                <!-- Google 站内搜索结束 --></li>
-            <li>
-                <h2>排行</h2>
-                <ul>
-                    <%
-                        List<ArticleBean> articleListTop = (List<ArticleBean>) session.getAttribute("top10");
-                        if (articleListTop.size() > 0) {
-                            for (int i = 0; i < articleListTop.size(); i++) {
-                                ArticleBean articleBean = (ArticleBean) articleListTop
-                                        .get(i);
-                    %>
-                    <li><a  href="/article/findById/find">
-                        <input type="hidden" name="articleId" value="<%=articleBean.getArticleId()%>">
-                        <%=articleBean.getArticleTitle()%></a>(<%=articleBean.getVisitCount()%>)
-                    </li>
-                    <%
-                            }
-                        }
-                    %>
-                </ul>
-            </li>
-            <li>
-                <h2>分类</h2>
-                <ul>
-                    <%
-                        List<ArticleTypeBean> articleTypeList = (List<ArticleTypeBean>) session.getAttribute("typeBeanList");
-                        List<ArticleBean> articleBeanList = (List<ArticleBean>) session.getAttribute("articleBeanList");
-                        if (articleTypeList.size() > 0) {
-                            for (int i = 0; i < articleTypeList.size(); i++) {
-                                ArticleTypeBean articleTypeBean = (ArticleTypeBean) articleTypeList.get(i);
-                    %>
-                    <li><a
-                            href="/type/selectByTypeId" methods="post">
-                        <input type="hidden" name="articleTypeId" value="<%=articleTypeBean.getArticleTypeId()%>">
-
-                        <%=articleTypeBean.getArticleTypeName()%>
-                    </a>
-                        <%
-                            int size=0;
-                            for (ArticleBean articleBean : articleBeanList) {
-                                while (articleBean.getArticleTypeId()==articleTypeBean.getArticleTypeId()){
-                                    size += 1;
-                                }
-                            }
-                        %>
-                        (<%=size%>)
-                    </li>
-                    <%
-                            }
-                        }
-                    %>
-                </ul>
-            </li>
-            <li>
-                <h2>链接</h2>
-                <ul>
-                    <%
-                        List<XbloLinkBean> xbloLinkList = (List<XbloLinkBean>) session.getAttribute("linkBeanList");
-                        if (xbloLinkList.size() > 0) {
-                            for (int i = 0; i < xbloLinkList.size(); i++) {
-                                XbloLinkBean xbloLinkBean = (XbloLinkBean) xbloLinkList
-                                        .get(i);
-                    %>
-                    <li><a href="http://<%=xbloLinkBean.getXbloLinkUrl()%>"
-                           target=_blank><%=xbloLinkBean.getXbloLinkName()%>
-                    </a></li>
-                    <%
-                            }
-                        }
-                    %>
-                </ul>
-            </li>
-        </ul>
-    </div>
-<%--    <%@ include file="view/FrontLeft.jsp" %>--%>
+    <jsp:include page="view/FrontLeft.jsp" flush="true" />
     <div style="clear: both;">&nbsp;</div>
 </div>
 <!-- start footer -->
@@ -210,10 +119,6 @@
 <!-- end footer -->
 <%
     session.removeAttribute("pageInfo");
-    session.removeAttribute("top10");
-    session.removeAttribute("typeBeanList");
-    session.removeAttribute("articleBeanList");
-    session.removeAttribute("linkBeanList");
 %>
 </body>
 </html>

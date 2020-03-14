@@ -48,13 +48,14 @@
                 <b>&nbsp;|&nbsp;</b> 阅读 (<%=articleSingle.getVisitCount()%>) <b>&nbsp;|&nbsp;</b>
                 <a href="#FeedBack">评论 (<%=commentCount%>)</a></small></p>
             <div class="entry">
-                <textarea name="content" rows="10" cols="20" readonly><%=articleSingle.getArticleContent()%></textarea>
+                <textarea name="content" rows="10" cols="61" readonly style="background: #ffab3f"><%=articleSingle.getArticleContent()%></textarea>
                 <p><%=articleSingle.getArticleContent()%>
                 </p>
             </div>
         </div>
 
-
+        <fieldset style="border: #DD691D">
+            <legend style="font-size: 20px">评论文章</legend>
             <form action="/comment/insert" method="post">
                 姓名：
                 <input type="text" name="articleCommentUser" size="60" placeholder="匿名用户"
@@ -63,13 +64,14 @@
                 <input type="text" class="easyui-textbox" name="articleCommentEmail"  size="60"
                        placeholder="user@domain.com" data-options="required:true,validType:'email'"/><br/>
                 内容：
-                <textarea name="articleCommentContent" rows="10" cols="60" placeholder="这里输入文字"></textarea><br/>
+                <textarea name="articleCommentContent" rows="10" cols="61" placeholder="这里输入文字"></textarea><br/>
 
                 <input type="hidden" name="articleId" value="<%=articleSingle.getArticleId()%>"/>
 
                 <input type="submit" value="提交" style="width: 50px" />
                 <input type="reset" value="重置" style="width:50px" />
             </form>
+        </fieldset>
         <!-- 评论开始 -->
         <div class="comment">
             <%

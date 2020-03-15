@@ -1,14 +1,8 @@
 package com.ruoyu.bean;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ArticleBean implements Serializable {
 
     // DB字段
@@ -21,4 +15,96 @@ public class ArticleBean implements Serializable {
     private int visitCount = 0; // 访问次数
     private int createUserId = -1; // 用户ID
 
+
+    @Override
+    public String toString() {
+        return "ArticleBean{" +
+                "articleId=" + articleId +
+                ", articleTypeId=" + articleTypeId +
+                ", articleTitle='" + articleTitle + '\'' +
+                ", articleSummary='" + articleSummary + '\'' +
+                ", articleContent='" + articleContent + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", visitCount=" + visitCount +
+                ", createUserId=" + createUserId +
+                '}';
+    }
+
+    public ArticleBean(int articleId, int articleTypeId, String articleTitle, String articleSummary, String articleContent, String createDate, int visitCount, int createUserId) {
+        this.articleId = articleId;
+        this.articleTypeId = articleTypeId;
+        this.articleTitle = articleTitle;
+        this.articleSummary = articleSummary;
+        this.articleContent = articleContent;
+        this.createDate = createDate;
+        this.visitCount = visitCount;
+        this.createUserId = createUserId;
+    }
+
+    public ArticleBean() {
+    }
+
+    public int getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(int articleId) {
+        this.articleId = articleId;
+    }
+
+    public int getArticleTypeId() {
+        return articleTypeId;
+    }
+
+    public void setArticleTypeId(int articleTypeId) {
+        this.articleTypeId = articleTypeId;
+    }
+
+    public String getArticleTitle() {
+        return articleTitle;
+    }
+
+    public void setArticleTitle(String articleTitle) {
+        this.articleTitle = articleTitle;
+    }
+
+    public String getArticleSummary() {
+        return articleSummary;
+    }
+
+    public void setArticleSummary(String articleSummary) {
+        this.articleSummary = articleSummary;
+    }
+
+    public String getArticleContent() {
+        return articleContent;
+    }
+
+    public void setArticleContent(String articleContent) {
+        this.articleContent = articleContent;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public int getVisitCount() {
+        return visitCount;
+    }
+
+    public void setVisitCount(int visitCount) {
+        this.visitCount = visitCount;
+    }
+
+    public int getCreateUserId() {
+        return createUserId;
+    }
+
+    public void setCreateUserId(int createUserId) {
+        this.createUserId = createUserId;
+    }
 }

@@ -71,14 +71,13 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PageInfo<ArticleBean> findAll(Integer page) {
+    public List<ArticleBean> findAll(Integer page) {
         PageHelper.startPage(page,6);
         List<ArticleBean> articleBeanList = articleMapper.findAll();
         for (ArticleBean articleBean : articleBeanList) {
             articleBean.setArticleContent(articleBean.getArticleContent().replaceAll("\\s*|\t", ""));
         }
-        PageInfo<ArticleBean> pageInfo=new PageInfo<>(articleBeanList);
-        return pageInfo;
+        return articleBeanList;
     }
 
     @Override

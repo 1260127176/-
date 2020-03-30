@@ -9,11 +9,16 @@ import com.ruoyu.service.ArticleTypeService;
 import com.ruoyu.service.XbloUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -31,7 +36,11 @@ public class XbloUserController{
     XbloUserService xbloUserService;
 
     @RequestMapping("insert")
-    public String addUser(XbloUserBean xbloUserBean) {
+    @Transactional
+    public String addUser(XbloUserBean xbloUserBean) throws NoSuchAlgorithmException {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        md5.update(xbloUserBean.getXbloPassword().getBytes());
+        xbloUserBean.setXbloPassword(new BigInteger(1, md5.digest()).toString(16));
         xbloUserService.addUser(xbloUserBean);
         return "admin/xbloUser/mgrXbloUser";
     }
@@ -78,17 +87,25 @@ public class XbloUserController{
         return "admin/xbloUser/mgrXbloUser";
     }
     @RequestMapping("login")
-    public String login(String xbloUsername,String xbloPassword,HttpServletRequest request,String pageNum){
-        if (pageNum==null || pageNum.equals("")) {
-            pageNum="1";
-        }
+    public String login(String xbloUsername,String xbloPassword,HttpServletRequest request,
+                        @RequestParam(value = "pageNum",required = false,defaultValue = "1") String pageNum){
         int page = Integer.parseInt(pageNum);
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            md5.update(xbloPassword.getBytes());
+            new BigInteger(1, md5.digest()).toString(16);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         XbloUserBean userBean = xbloUserService.login(xbloUsername, xbloPassword);
+        System.out.println("==================="+userBean);
         if (userBean != null && !userBean.equals("")){
             List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
-            PageInfo<ArticleBean> articleBeanList = articleService.findAll(page);
-            request.getSession().setAttribute("loginName",xbloUsername);
-            request.getSession().setAttribute("articleBeanList",articleBeanList);
+            List<ArticleBean> articleBeanList = articleService.findAll(page);
+            PageInfo<ArticleBean> pageInfo = new PageInfo<>(articleBeanList);
+
+            request.getSession().setAttribute("articleBeanList",pageInfo);
             request.getSession().setAttribute("userBean",userBean);
             request.getSession().setAttribute("typeBeanList",typeBeanList);
             request.getSession().setAttribute("loginMessage",userBean.getXbloUsername());

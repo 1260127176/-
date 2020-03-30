@@ -1,12 +1,12 @@
 package com.ruoyu.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.ruoyu.bean.ArticleBean;
-import com.ruoyu.bean.ArticleTypeBean;
-import com.ruoyu.service.ArticleTypeService;
+import com.ruoyu.bean.*;
+import com.ruoyu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -19,6 +19,17 @@ public class ArticleTypeController {
 
     @Autowired
     HttpServletRequest request;
+
+    @Autowired
+    ArticleService articleService;
+
+    @Autowired
+    XbloLinkService xbloLinkService;
+    @Autowired
+    ArticleCommentService articleCommentService;
+
+    @Autowired
+    XbloUserService xbloUserService;
 
     @RequestMapping("insert")
     public String addArticleType(ArticleTypeBean articleTypeBean) {
@@ -61,10 +72,28 @@ public class ArticleTypeController {
         request.getSession().setAttribute("typeBeanList",pageInfo);
         return "admin/articleType/mgrArticleType";
     }
-    @RequestMapping("selectByTypeId")
-    String findAllByTypeId(Integer articleTypeId){
-        List<ArticleBean> articleBeanList = articleTypeService.findArticleByTypeId(articleTypeId);
-        request.setAttribute("articleBeanList",articleBeanList);
-        return "forward:/";
+    @RequestMapping("/selectByTypeId")
+    public String findArticleForType(Integer articleTypeId,
+                                     @RequestParam(value = "pageNum",required = false,defaultValue = "1") String pageNum
+    ){
+        int page=Integer.parseInt(pageNum);
+        List<ArticleBean> articleBeanList = articleTypeService.findArticleByTypeId(articleTypeId,page);
+        PageInfo<ArticleBean> pageInfo = new PageInfo<ArticleBean>(articleBeanList);
+        List<ArticleBean> articleBeanList1 = articleService.findAll();
+        List<ArticleBean> top10 = articleService.findArticleTop10();
+        List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
+        List<XbloLinkBean> linkBeanList = xbloLinkService.findAll();
+        List<ArticleCommentBean> commentBeanList = articleCommentService.findAll();
+        List<XbloUserBean> userBeanList = xbloUserService.findAll();
+        request.getSession().setAttribute("articleBeanList",articleBeanList1);
+        request.getSession().setAttribute("commentBeanList",commentBeanList);
+        request.getSession().setAttribute("typeBeanList",typeBeanList);
+        request.getSession().setAttribute("linkBeanList",linkBeanList);
+        request.getSession().setAttribute("top10",top10);
+        request.getSession().setAttribute("userBeanList",userBeanList);
+        request.getSession().setAttribute("pageInfo", pageInfo);
+        request.getSession().setAttribute("requestUrl", "type/selectByTypeId");
+        request.getSession().setAttribute("articleTypeId", articleTypeId);
+        return "front/FrontIndex";
     }
 }

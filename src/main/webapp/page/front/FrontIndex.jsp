@@ -18,8 +18,12 @@
 <div id="page">
     <div id="content">
         <%
-            //                    List<ArticleCommentBean> articleCommentList = (List<ArticleCommentBean>) request.getAttribute("commentBeanList");
-            PageInfo<ArticleMessage> articleList= (PageInfo<ArticleMessage>) session.getAttribute("pageInfo");
+            List<ArticleCommentBean> articleCommentList = (List<ArticleCommentBean>) request.getSession().getAttribute("commentBeanList");
+//            List<ArticleBean> articleBeanList = (List<ArticleBean>) request.getSession().getAttribute("articleBeanList");
+            PageInfo<ArticleBean> articleList= (PageInfo<ArticleBean>) request.getSession().getAttribute("pageInfo");
+            List<ArticleTypeBean> typeBeanList = (List<ArticleTypeBean>) request.getSession().getAttribute("typeBeanList");
+            List<XbloUserBean> userBeanList = (List<XbloUserBean>) request.getSession().getAttribute("userBeanList");
+            String requestUrl = (String) session.getAttribute("requestUrl");
             if (articleList == null || articleList.getSize() == 0) {
         %>
         <div class="post">
@@ -33,22 +37,32 @@
 
         <%
         } else {
-            int i = 0;
-            String username = "";
-            int commentCount = 0;
-            while (i < articleList.getSize()) {
-                String articleTypeName = (String) articleList.getList().get(i).getArticleTypeName();
-                if (articleTypeName == null || articleTypeName.equals(""))
-                    articleTypeName = "未分类";
+                String articleTypeName=null;
+                String creteUserName=null;
+            List<ArticleBean> articleBeanList=articleList.getList();
+            for (int i=0;i < articleList.getSize();i++) {
+                for (ArticleTypeBean articleTypeBean : typeBeanList) {
+                    Integer articleTypeId = articleBeanList.get(i).getArticleTypeId();
+                    if (articleTypeId == articleTypeBean.getArticleTypeId()) {
+                        articleTypeName = articleTypeBean.getArticleTypeName();
+                    } else if (articleTypeId.equals("") || articleTypeId == null)
+                        articleTypeName = "未分类";
+                }
+                for (XbloUserBean xbloUserBean : userBeanList) {
+                    if (articleBeanList.get(i).getCreateUserId()==xbloUserBean.getXbloUserId()){
+                        creteUserName=xbloUserBean.getXbloUsername();
+                    }
+
+                }
         %>
         <div class="post">
-            <h2 class="title">[<%=articleList.getList().get(i).getArticleTypeName()%>]<%=articleList.getList().get(i).getArticleTitle()%>
+            <h2 class="title">[<%=articleTypeName%>]<%=articleList.getList().get(i).getArticleTitle()%>
             </h2>
             <p class="meta">
-                <small><%=articleTypeName%>
+                <small><%=creteUserName%>
                     发布于 <%=articleList.getList().get(i).getCreateDate()%>
                     <b>&nbsp;|&nbsp;</b>
-                    阅读 (<%=articleList.getList().get(i).getVisitCount()%>) <b>&nbsp;|&nbsp;</b>
+                    阅读 (<%=articleList.getList().get(i).getVisitCount()%>) <b>&nbsp;|&nbsp;</b>评论
                     <a  href="comment/select" >
                         <input type="hidden" name="articleId" value="<%=articleList.getList().get(i).getArticleId()%>"/>
                     </a></small></p>
@@ -64,45 +78,44 @@
             </div>
         </div>
         <%
-                    i++;
                 }
             }
         %>
         <div style="padding:10px;text-align: center" >
             <c:if test="<%=!articleList.isIsFirstPage()%>">
-                <form action="/ruoyu" style="float: left ; align-content: center" method="post">
-                    <input type="hidden" name="src" value="admin/article/mgrArticle"/>
+                <form action="<%=path%>/<%=requestUrl%>" style="float: left ; align-content: center" method="post">
+                    <input type="hidden" name="articleTypeId" value="${sessionScope.get("articleTypeId")}"/>
                     <input type="hidden" name="pageNum" value="<%=articleList.getNavigateFirstPage()%>"/>
                     <input type="image" src="<%=basePath%>/static/images/first.png" onClick="document.name.submit()" style="text-align: center" />&nbsp;&nbsp;|
                 </form>
             </c:if>
 
             <c:if test="<%=articleList.isHasPreviousPage()%>">
-                <form action="/ruoyu" style="float: left;align-content: center" method="post">
-                    <input type="hidden" name="src" value="admin/article/mgrArticle"/>
+                <form action="<%=path%>/<%=requestUrl%>" style="float: left;align-content: center" method="post">
+                    <input type="hidden" name="articleTypeId" value="${sessionScope.get("articleTypeId")}"/>
                     <input type="hidden" name="pageNum" value="<%=articleList.getPrePage()%>"/>
                     <input type="image" src="<%=basePath%>/static/images/pre.png" onclick="document.name.submit()" style="text-align: center" />&nbsp;&nbsp;|
                 </form>
             </c:if>
 
             <c:forEach items="${pageInfo.navigatepageNums}" var="num">
-                <form action="/ruoyu" style="float: left;color:${num eq pageInfo.pageNum?"red":""};align-content: center " method="post">
-                    <input type="hidden" name="src" value="admin/article/mgrArticle"/>
+                <form action="<%=path%>/<%=requestUrl%>" style="float: left;color:${num eq pageInfo.pageNum?"red":""};align-content: center " method="post">
+                    <input type="hidden" name="articleTypeId" value="${sessionScope.get("articleTypeId")}"/>
                     <input type="hidden" name="pageNum" value="${num}"/>
                     <input type="submit" value="${num}" style="text-align: center"/>&nbsp;&nbsp;|
                 </form>
             </c:forEach>
 
             <c:if test="<%=articleList.isHasNextPage()%>">
-                <form action="/ruoyu" style="float: left;align-content: center" method="post">
-                    <input type="hidden" name="src" value="admin/article/mgrArticle"/>
+                <form action="<%=path%>/<%=requestUrl%>" style="float: left;align-content: center" method="post">
+                    <input type="hidden" name="articleTypeId" value="${sessionScope.get("articleTypeId")}"/>
                     <input type="hidden" name="pageNum" value="<%=articleList.getNextPage()%>"/>
                     <input type="image" src="<%=basePath%>/static/images/next.png" onclick="document.name.submit()" style="text-align: center"/>&nbsp;&nbsp;|
                 </form>
             </c:if>
             <c:if test="<%=!articleList.isIsLastPage()%>">
-                <form action="/ruoyu" style="float: left;align-content: center" method="post">
-                    <input type="hidden" name="src" value="admin/article/mgrArticle"/>
+                <form action="<%=path%>/<%=requestUrl%>" style="float: left;align-content: center" method="post">
+                    <input type="hidden" name="articleTypeId" value="${sessionScope.get("articleTypeId")}"/>
                     <input type="hidden" name="pageNum" value="<%=articleList.getNavigateLastPage()%>"/>
                     <input type="image" src="<%=basePath%>/static/images/last.png" onclick="document.name.submit()" style="text-align: center"/>
                 </form>
@@ -119,6 +132,10 @@
 <!-- end footer -->
 <%
     session.removeAttribute("pageInfo");
+    session.removeAttribute("requestUrl");
+    session.removeAttribute("commentBeanList");
+    session.removeAttribute("typeBeanList");
+    session.removeAttribute("userBeanList");
 %>
 </body>
 </html>

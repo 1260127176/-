@@ -9,6 +9,9 @@ server:
   tomcat:
     uri-encoding: UTF-8
   port: 8080
+  servlet:
+    session:
+      timeout:
 spring:
   http:
     encoding:
@@ -53,6 +56,7 @@ spring:
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: true
   type-aliases-package: com.ruoyu.bean
 # 配置pagehelper参数
 pagehelper:

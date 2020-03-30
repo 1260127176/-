@@ -31,7 +31,7 @@ public interface ArticleService {
     List<ArticleBean> findByTitle(@Param("keyword") String keyword);
     //查询全部
     List<ArticleBean> findAll();
-    PageInfo<ArticleBean> findAll(Integer page);
+    List<ArticleBean> findAll(Integer page);
     //查询阅读前十，倒序排列
     List<ArticleBean> findArticleTop10();
     List<ArticleMessage> findTypeNameById();

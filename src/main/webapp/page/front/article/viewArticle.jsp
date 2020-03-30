@@ -53,7 +53,7 @@
                 </p>
             </div>
         </div>
-
+<!--评论开始-->
         <fieldset style="border: #DD691D">
             <legend style="font-size: 20px">评论文章</legend>
             <form action="/comment/insert" method="post">
@@ -72,7 +72,8 @@
                 <input type="reset" value="重置" style="width:50px" />
             </form>
         </fieldset>
-        <!-- 评论开始 -->
+        <!-- 评论结束 -->
+
         <div class="comment">
             <%
                 for (Iterator<ArticleCommentBean> iter = articleCommentList
@@ -89,7 +90,6 @@
                 }
             %> <a name="FeedBack"></a>
         </div>
-        <!-- 评论结束 -->
     </div>
 
 

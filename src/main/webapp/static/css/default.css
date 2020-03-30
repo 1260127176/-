@@ -333,5 +333,21 @@ img.right {
     border-top: 1px solid #1A1A1A;
     background: #0f0f0f;
 }
+.button {
+    background-color: #FF5722;
+    border: 1px solid green;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    width: 230px;
+    height: 8px;
+    cursor: pointer;
+}
 
+.button:hover {
+    background-color: #3e8e41;
+}
 /*dxl--end---*/

@@ -99,6 +99,7 @@ public class ArticleController{
 //按文章id查询文章
     @RequestMapping("findById/{operating}")
     public String findById(@PathVariable("operating")String operating, String articleId){
+        System.out.println("-------------articleId:"+articleId);
         int articleId1 = Integer.parseInt(articleId);
         ArticleBean articleBean = articleService.findByArticleId(articleId1);
         List<ArticleBean> top10 = articleService.findArticleTop10();
@@ -131,9 +132,10 @@ public class ArticleController{
             pageNum="1";
         }
         int page = Integer.parseInt(pageNum);
-        PageInfo<ArticleBean> articleBeanList = articleService.findAll(page);
+        List<ArticleBean> articleBeanList = articleService.findAll(page);
+        PageInfo<ArticleBean> pageInfo = new PageInfo<>(articleBeanList);
         HashSet<ArticleTypeBean> set = new HashSet<>();
-        for (ArticleBean articleBean : articleBeanList.getList()) {
+        for (ArticleBean articleBean : pageInfo.getList()) {
             ArticleTypeBean typeBean = articleTypeService.findByTypeId(articleBean.getArticleTypeId());
             set.add(typeBean);
         }

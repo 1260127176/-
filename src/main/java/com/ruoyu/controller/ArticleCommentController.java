@@ -45,13 +45,6 @@ public class ArticleCommentController {
     @RequestMapping(value = "insert")
     public String addArticleComment( String articleCommentUser, String articleCommentEmail,
                                      String articleCommentContent, String articleId,String pageNum) {
-        if (request.getSession().getAttribute("loginMessage")==null){
-            JOptionPane.showMessageDialog(null,"您当前尚未登录，请登录后再评论","标题",JOptionPane.ERROR_MESSAGE);
-        }
-        XbloUserBean userBean1 = (XbloUserBean) request.getSession().getAttribute("userBean");
-        if (userBean1.equals("") || userBean1==null){
-            JOptionPane.showMessageDialog(null,"您当前尚未登录，请登录后再评论","标题",JOptionPane.ERROR_MESSAGE);
-        }
         if (pageNum==null || pageNum.equals("")) {
             pageNum="1";
         }

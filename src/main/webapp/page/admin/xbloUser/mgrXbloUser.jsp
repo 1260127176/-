@@ -29,19 +29,36 @@
 
 <body id="page">
 <h2>用户管理</h2>
+<form action="/user/insert"
+      method="post">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
+        <tr>
+            <th>用户名：</th>
+            <td><input type="text" name="xbloUsername" size="20" /></td>
+        </tr>
+        <tr>
+            <th>密码：</th>
+            <td><input type="text" name="xbloPassword" size="50" /></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><input type="submit" class="bt" value="新增用户" /></td>
+        </tr>
+    </table>
+</form>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <%
             for (int i=0;i<allUser.getSize();i++){
         %>
 
         <tr>
-            <th>用户名：</th>
+            <th style="width: 120px">用户名：</th>
             <td><%=allUser.getList().get(i).getXbloUsername()%>
             </td>
         </tr>
         <tr>
-            <th>操作：</th>
+            <th style="width: 120px">操作：</th>
             <td>
                 <form action="/user/select/find" style="float: left">
                     <input type="hidden" name="xbloUserId" value="<%=allUser.getList().get(i).getXbloUserId()%>"/>

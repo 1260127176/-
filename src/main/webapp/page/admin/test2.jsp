@@ -15,12 +15,12 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>博客-侧栏</title>
+    <link href="${pageContext.request.contextPath}/static/css/default.css" rel="stylesheet"
+          type="text/css" media="screen"/>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="<%=path%>/static/layuiadmin/layui/css/layui.css"  media="all">
-    <link href="${pageContext.request.contextPath}/static/css/default.css" rel="stylesheet"
-          type="text/css" media="screen"/>
     <style>
         .img{
             width: 20px;
@@ -43,23 +43,23 @@
         </li>
     </ul>
 
-    <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="demo" style="margin-right: 10px;width: 270px">
-        <li class="layui-nav-item layui-nav-itemed">
-            <a href="javascript:;">分类</a>
-            <dl class="layui-nav-child">
-                    <%
-                    List<ArticleTypeBean> articleTypeList =(List<ArticleTypeBean>) session.getAttribute("typeBeanList");
+            <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="demo" style="margin-right: 10px;">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">分类</a>
+                    <dl class="layui-nav-child">
+                <%
+                    PageInfo<ArticleTypeBean> articleTypeList = (PageInfo<ArticleTypeBean>) session.getAttribute("typeBeanList");
                     List<ArticleBean> articleList = (List<ArticleBean>) session.getAttribute("articleBeanList");
 
-                    if (articleTypeList.size() > 0) {
-                        for (int i = 0; i < articleTypeList.size(); i++) {
-                            ArticleTypeBean articleTypeBean = (ArticleTypeBean) articleTypeList.get(i);
+                    if (articleTypeList.getList().size() > 0) {
+                        for (int i = 0; i < articleTypeList.getList().size(); i++) {
+                            ArticleTypeBean articleTypeBean = (ArticleTypeBean) articleTypeList.getList().get(i);
                 %>
                 <dd>
                     <form action="<%=path%>/type/selectByTypeId" method="post">
                         <input type="hidden" name="articleTypeId" value="<%=articleTypeBean.getArticleTypeId()%>">
                         <input type="submit" class="button" value="<%=articleTypeBean.getArticleTypeName()%>" />
-
+                    </form>
                     <%
                         int size=0;
                         for (ArticleBean articleBean : articleList) {
@@ -69,13 +69,40 @@
                         }
                     %>
                     (<%=size%>)
-                    </form>
                 </dd>
-                    <%
+                <%
                         }
                     }
                 %>
-        </li>
+                </li>
+                <div style="padding:10px;text-align: center" >
+                    <c:if test="<%=!articleTypeList.isIsFirstPage()%>">
+                        <form action="/ruoyu" style="float: left ; align-content: center" method="post">
+                            <input type="hidden" name="typePageNum" value="<%=articleTypeList.getNavigateFirstPage()%>"/>
+                            <input type="image" class="img" src="<%=basePath%>/static/images/first.png" onClick="document.name.submit()" />&nbsp;&nbsp;|
+                        </form>
+                    </c:if>
+
+                    <c:if test="<%=articleTypeList.isHasPreviousPage()%>">
+                        <form action="/ruoyu" style="float: left;align-content: center" method="post">
+                            <input type="hidden" name="typePageNum" value="<%=articleTypeList.getPrePage()%>"/>
+                            <input type="image" class="img" src="<%=basePath%>/static/images/pre.png" onclick="document.name.submit()" />&nbsp;&nbsp;|
+                        </form>
+                    </c:if>
+
+                    <c:if test="<%=articleTypeList.isHasNextPage()%>">
+                        <form action="/ruoyu" style="float: left;align-content: center" method="post">
+                            <input type="hidden" name="typePageNum" value="<%=articleTypeList.getNextPage()%>"/>
+                            <input type="image" class="img" src="<%=basePath%>/static/images/next.png" onclick="document.name.submit()"/>&nbsp;&nbsp;|
+                        </form>
+                    </c:if>
+                    <c:if test="<%=!articleTypeList.isIsLastPage()%>">
+                        <form action="/ruoyu" style="float: left;align-content: center" method="post">
+                            <input type="hidden" name="typePageNum " value="<%=articleTypeList.getNavigateLastPage()%>"/>
+                            <input type="image" class="img" src="<%=basePath%>/static/images/last.png" onclick="document.name.submit()"/>
+                        </form>
+                    </c:if>
+                </div>
 
 
         <li class="layui-nav-item">
@@ -104,6 +131,7 @@
         <li class="layui-nav-item">
             <a href="javascript:;">链接</a>
             <dl class="layui-nav-child">
+
                 <%
                     List<XbloLinkBean> xbloLinkList = (List<XbloLinkBean>) session.getAttribute("linkBeanList");
                     if (xbloLinkList.size() > 0) {
@@ -111,15 +139,16 @@
                             XbloLinkBean xbloLinkBean = (XbloLinkBean) xbloLinkList
                                     .get(i);
                 %>
-                <dd>
-                    <a href="http://<%=xbloLinkBean.getXbloLinkUrl()%>"
+                    <dd>
+                <a href="http://<%=xbloLinkBean.getXbloLinkUrl()%>"
                        target=_blank><%=xbloLinkBean.getXbloLinkName()%>
-                    </a>
+                </a>
                 </dd>
                 <%
                         }
                     }
                 %>
+
             </dl>
         </li>
     </ul>
@@ -133,16 +162,3 @@
     session.removeAttribute("articleBeanList");
     session.removeAttribute("linkBeanList");
 %>
-<script src="<%=path%>/static/layuiadmin/layui/layui.js" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
-<script>
-    layui.use('element', function(){
-        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
-
-        //监听导航点击
-        element.on('nav(demo)', function(elem){
-            //console.log(elem)
-            layer.msg(elem.text());
-        });
-    });
-</script>

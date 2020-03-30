@@ -29,7 +29,7 @@
         <%
         if (session.getAttribute("loginName")==null ||session.getAttribute("loginName").equals("")) {
         %>
-        <li><a href="/user/tologin">管理
+        <li><a href="<%=path%>/user/tologin">管理
         </a></li>
         <%
             }

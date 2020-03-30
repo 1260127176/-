@@ -65,7 +65,8 @@ public class ArticleTypeServiceImpl implements ArticleTypeService {
     }
 
     @Override
-    public List<ArticleBean> findArticleByTypeId(Integer articleTypeId) {
+    public List<ArticleBean> findArticleByTypeId(Integer articleTypeId,Integer page) {
+        PageHelper.startPage(page,5);
         List<ArticleBean> articleBeanList = articleTypeMapper.findArticleByTypeId(articleTypeId);
         return articleBeanList;
     }

@@ -43,14 +43,14 @@ public interface ArticleMapper {
             "t.articleTypeId = a.articleTypeId AND a.createUserId=u.xbloUserId ")
     Map<String,Object> findTypeNameById();
     @Select("SELECT a.*,t.articleTypeName,u.xbloUsername FROM article AS a,articletype AS t,xblouser AS u WHERE " +
-            "t.articleTypeId = a.articleTypeId AND a.createUserId=u.xbloUserId order by createDate ")
+            "t.articleTypeId = a.articleTypeId AND a.createUserId=u.xbloUserId order by createDate DESC ")
     List<ArticleMessage> findArticleMessaege();
     //按条件相似查询
     @Select("SELECT  * FROM Article WHERE articleTitle LIKE #{keyword} OR " +
-            "articleSummary LIKE #{keyword} OR articleContent LIKE #{keyword} order by createDate ")
+            "articleSummary LIKE #{keyword} OR articleContent LIKE #{keyword} order by createDate DESC ")
     List<ArticleBean> findByTitle(String keyword);
     //查询全部
-    @Select("select * from article order by createDate")
+    @Select("select * from article order by createDate DESC")
     List<ArticleBean> findAll();
 //查询阅读前十，倒序排列
     @Select("SELECT  * FROM   article  ORDER BY visitCount DESC Limit 0,10")

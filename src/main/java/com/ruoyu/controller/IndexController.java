@@ -6,10 +6,9 @@ import com.ruoyu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -41,76 +40,112 @@ public class IndexController {
     @Autowired
     HttpServletRequest request;
 
-    @Autowired
-    HttpServletResponse response;
-
     @RequestMapping("ruoyu")
-    public String toIndex(String pageNum){
-        System.out.println("pageNum:"+pageNum+"-------------");
-        if (pageNum==null || pageNum.equals("")) {
-            pageNum="1";
-        }
+    public String toIndex(@RequestParam(value = "pageNum",required = false,defaultValue = "1") String pageNum){
         int page = Integer.parseInt(pageNum);
-        List<ArticleBean> articleBeanList = articleService.findAll();
-        List<ArticleMessage> articleMessaege = articleService.findArticleMessaege(page);
-        PageInfo<ArticleMessage> pageInfo = new PageInfo<>(articleMessaege);
+        List<ArticleBean> articleBeanList1 = articleService.findAll();
+        List<ArticleBean> articleBeanList = articleService.findAll(page);
+        PageInfo<ArticleBean> pageInfo = new PageInfo<>(articleBeanList);
+        request.getSession().setAttribute("pageInfo", pageInfo);
         List<ArticleBean> top10 = articleService.findArticleTop10();
-        List<ArticleTypeBean> typeBeanList = articleTypeService.findAll(page);
+        List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
         List<XbloLinkBean> linkBeanList = xbloLinkService.findAll();
-        request.getSession().setAttribute("articleBeanList",articleBeanList);
-        request.getSession().setAttribute("pageInfo",pageInfo);
+        List<ArticleCommentBean> commentBeanList = articleCommentService.findAll();
+        List<XbloUserBean> userBeanList = xbloUserService.findAll();
+        request.getSession().setAttribute("articleBeanList",articleBeanList1);
+        request.getSession().setAttribute("commentBeanList",commentBeanList);
         request.getSession().setAttribute("typeBeanList",typeBeanList);
         request.getSession().setAttribute("linkBeanList",linkBeanList);
         request.getSession().setAttribute("top10",top10);
-        System.out.println("END---");
+        request.getSession().setAttribute("userBeanList",userBeanList);
+        request.getSession().setAttribute("requestUrl","/ruoyu");
         return "front/FrontIndex";
     }
     @RequestMapping("pageInfo")
-    public String toPage(String src, String pageNum){
-        request.setAttribute("src",src);
-        if (pageNum==null || pageNum.equals("")) {
-            pageNum="1";
-        }
+    public String toPage(@RequestParam(value = "src",required = false,defaultValue = "admin/siteInfo")String src,
+                         @RequestParam(value = "pageNum",required = false,defaultValue = "1") String pageNum
+    ) {
+        request.setAttribute("src", src);
         int page = Integer.parseInt(pageNum);
-        if (src==null || src.equals("")){
-            src="admin/siteInfo";
-        }
-        if (src.equals("admin/siteInfo")){
-            PageInfo<ArticleBean> articleBeanList = articleService.findAll(page);
-            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
-            request.getSession().setAttribute("articleBeanList",articleBeanList);
-            request.getSession().setAttribute("typeBeanList",typeBeanList);
-        }else if (src.equals("admin/article/addArticle")){
-            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
-            request.getSession().setAttribute("typeBeanList",typeBeanList);
+        switch (src) {
+            case "admin/siteInfo": {
+                List<ArticleBean> articleBeanList = articleService.findAll(page);
+                PageInfo<ArticleBean> pageInfo = new PageInfo<>(articleBeanList);
+                List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
+                request.getSession().setAttribute("articleBeanList", pageInfo);
+                request.getSession().setAttribute("typeBeanList", typeBeanList);
+                break;
+            }
+            case "admin/article/addArticle": {
+                List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
+                request.getSession().setAttribute("typeBeanList", typeBeanList);
+                break;
+            }
+            case "admin/article/mgrArticle": {
+                List<ArticleMessage> articleMessaege = articleService.findArticleMessaege(page);
+                PageInfo<ArticleMessage> pageInfo = new PageInfo<>(articleMessaege);
+                request.getSession().setAttribute("articleMessaege", articleMessaege);
+                request.getSession().setAttribute("pageInfo", pageInfo);
+                break;
+            }
+            case "admin/articleType/mgrArticleType": {
+                List<ArticleTypeBean> typeBeanList = articleTypeService.findAll(page);
+                PageInfo<ArticleTypeBean> pageInfo = new PageInfo<>(typeBeanList);
+                request.getSession().setAttribute("typeBeanList", pageInfo);
+                break;
+            }
+            case "admin/xbloLink/mgrXbloLink": {
+                List<XbloLinkBean> linkBeanList = xbloLinkService.findAll(page);
+                PageInfo<XbloLinkBean> pageInfo = new PageInfo<>(linkBeanList);
+                request.getSession().setAttribute("linkBeanList", pageInfo);
+                break;
+            }
+            case "admin/xbloUser/mgrXbloUser": {
+                List<XbloUserBean> userBeanList = xbloUserService.findAll(page);
+                PageInfo<XbloUserBean> pageInfo = new PageInfo<>(userBeanList);
+                request.getSession().setAttribute("userBeanList", pageInfo);
+                break;
+            }
 
-        }else if (src.equals("admin/article/mgrArticle")){
-//            PageInfo<ArticleBean> page = articleService.findAll(pageNum);
-//            List<Map<String, Object>> typeAndArticle = articleService.findTypeNameById();
-            List<ArticleMessage> articleMessaege = articleService.findArticleMessaege(page);
-            PageInfo<ArticleMessage> pageInfo = new PageInfo<>(articleMessaege);
-            request.getSession().setAttribute("articleMessaege",articleMessaege);
-            request.getSession().setAttribute("pageInfo",pageInfo);
-
-
-        }else if (src.equals("admin/articleType/mgrArticleType")){
-            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll(page);
-            PageInfo<ArticleTypeBean> pageInfo = new PageInfo<>(typeBeanList);
-            request.getSession().setAttribute("typeBeanList",pageInfo);
-
-        }else if (src.equals("admin/xbloLink/mgrXbloLink")){
-            List<XbloLinkBean> linkBeanList = xbloLinkService.findAll(page);
-            PageInfo<XbloLinkBean> pageInfo = new PageInfo<>(linkBeanList);
-            request.getSession().setAttribute("linkBeanList",pageInfo);
-
-        }else if (src.equals("admin/xbloUser/mgrXbloUser")){
-            List<XbloUserBean> userBeanList = xbloUserService.findAll(page);
-            PageInfo<XbloUserBean> pageInfo = new PageInfo<>(userBeanList);
-            request.getSession().setAttribute("userBeanList",pageInfo);
-
+            default:
+                System.out.println("无对应匹配值");
         }
         return "admin/admin";
-    }
+//        if (src.equals("admin/siteInfo")){
+//            List<ArticleBean> articleBeanList = articleService.findAll(page);
+//            PageInfo<ArticleBean> pageInfo = new PageInfo<>(articleBeanList);
+//            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
+//            request.getSession().setAttribute("articleBeanList",pageInfo);
+//            request.getSession().setAttribute("typeBeanList",typeBeanList);
+//        }else if (src.equals("admin/article/addArticle")){
+//            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll();
+//            request.getSession().setAttribute("typeBeanList",typeBeanList);
+//
+//        }else if (src.equals("admin/article/mgrArticle")){
+////            PageInfo<ArticleBean> page = articleService.findAll(pageNum);
+////            List<Map<String, Object>> typeAndArticle = articleService.findTypeNameById();
+//            List<ArticleMessage> articleMessaege = articleService.findArticleMessaege(page);
+//            PageInfo<ArticleMessage> pageInfo = new PageInfo<>(articleMessaege);
+//            request.getSession().setAttribute("articleMessaege",articleMessaege);
+//            request.getSession().setAttribute("pageInfo",pageInfo);
+//        }else if (src.equals("admin/articleType/mgrArticleType")){
+//            List<ArticleTypeBean> typeBeanList = articleTypeService.findAll(page);
+//            PageInfo<ArticleTypeBean> pageInfo = new PageInfo<>(typeBeanList);
+//            request.getSession().setAttribute("typeBeanList",pageInfo);
+//
+//        }else if (src.equals("admin/xbloLink/mgrXbloLink")){
+//            List<XbloLinkBean> linkBeanList = xbloLinkService.findAll(page);
+//            PageInfo<XbloLinkBean> pageInfo = new PageInfo<>(linkBeanList);
+//            request.getSession().setAttribute("linkBeanList",pageInfo);
+//
+//        }else if (src.equals("admin/xbloUser/mgrXbloUser")){
+//            List<XbloUserBean> userBeanList = xbloUserService.findAll(page);
+//            PageInfo<XbloUserBean> pageInfo = new PageInfo<>(userBeanList);
+//            request.getSession().setAttribute("userBeanList",pageInfo);
+//
+//        }
+//        return "admin/admin";
+//    }
 
 //    /**
 //     * 注册页面点击发送验证码，传送邮箱到后端，发送验证码到邮箱
@@ -144,4 +179,5 @@ public class IndexController {
 //        return "0";
 //    }
 
+    }
 }

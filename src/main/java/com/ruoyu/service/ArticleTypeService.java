@@ -32,5 +32,5 @@ public interface ArticleTypeService {
     List<ArticleTypeBean> findAll(Integer pageNum);
     List<ArticleTypeBean> findAll();
     //按照文章类型id查询
-    List<ArticleBean> findArticleByTypeId(Integer articleTypeId);
+    List<ArticleBean> findArticleByTypeId(Integer articleTypeId,Integer page);
 }
